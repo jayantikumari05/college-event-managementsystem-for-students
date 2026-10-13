@@ -1,0 +1,116 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8"><meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>CampusConnect | Event Registration</title>
+<style>
+:root{--navy:#172554;--blue:#3156c9;--bg:#f4f6fb;--ink:#20283b;--muted:#667085;--line:#e3e7f0;--white:#fff;--green:#147d54;--orange:#a75b08}
+*{box-sizing:border-box}body{margin:0;background:var(--bg);color:var(--ink);font-family:Arial,Helvetica,sans-serif}
+header{background:linear-gradient(120deg,#172554,#3156c9);color:white;padding:28px 20px}
+.wrap{max-width:1100px;margin:auto}header .brand{font-size:13px;letter-spacing:2px;font-weight:bold;color:#cbd8ff}header h1{font-size:clamp(27px,4vw,38px);margin:10px 0}header p{margin:0;color:#e0e7ff;max-width:680px;line-height:1.5}
+main{max-width:1100px;margin:24px auto;padding:0 16px}.stats{display:grid;grid-template-columns:repeat(3,1fr);gap:14px;margin-bottom:20px}
+.card{background:white;border:1px solid var(--line);border-radius:14px;padding:18px;box-shadow:0 4px 15px #17255408}
+.stat-label{font-size:13px;color:var(--muted)}.stat-number{font-size:30px;font-weight:bold;margin-top:8px}
+.columns{display:grid;grid-template-columns:340px 1fr;gap:18px}.card h2{font-size:19px;margin:0 0 16px}
+label{display:block;font-size:13px;font-weight:bold;margin:12px 0 6px}input,select,textarea{width:100%;padding:11px;border:1px solid #cbd3e1;border-radius:8px;background:white;font:inherit;color:var(--ink)}textarea{min-height:70px;resize:vertical}
+.btn{border:0;border-radius:8px;padding:11px 14px;cursor:pointer;font-weight:bold}.primary{background:var(--blue);color:white;width:100%;margin-top:15px}.secondary{background:#edf1ff;color:#2441a0}.danger{background:#fff0ee;color:#b42318}
+.toolbar{display:flex;gap:9px;flex-wrap:wrap;margin-bottom:14px}.toolbar input{flex:1;min-width:170px}.toolbar select{width:auto;min-width:140px}
+.event{display:flex;gap:14px;padding:15px 0;border-bottom:1px solid var(--line)}.event:last-child{border-bottom:0}.datebox{width:62px;min-width:62px;height:68px;background:#edf1ff;color:#2441a0;border-radius:10px;display:flex;flex-direction:column;align-items:center;justify-content:center;font-weight:bold}.datebox strong{font-size:23px}.datebox span{font-size:11px;text-transform:uppercase}
+.event-content{flex:1;min-width:0}.event h3{margin:1px 0 7px;font-size:17px}.event p{margin:0 0 9px;color:var(--muted);font-size:13px;line-height:1.5}.chips{display:flex;gap:6px;flex-wrap:wrap}.chip{font-size:11px;padding:5px 8px;border-radius:20px;background:#f0f2f6;color:#475467}.chip.open{background:#dff7ec;color:var(--green)}.chip.full{background:#fff0d8;color:var(--orange)}
+.event-action{display:flex;flex-direction:column;gap:8px;justify-content:center}.event-action button{white-space:nowrap}.empty{text-align:center;color:var(--muted);padding:30px 8px}.registration{display:flex;justify-content:space-between;gap:10px;align-items:center;border-bottom:1px solid var(--line);padding:12px 0}.registration:last-child{border-bottom:0}.registration strong{display:block;font-size:14px}.registration small{display:block;color:var(--muted);margin-top:4px}.section-title{display:flex;align-items:center;justify-content:space-between;gap:8px}.section-title span{font-size:12px;color:var(--muted)}footer{text-align:center;color:var(--muted);font-size:12px;padding:24px}
+#toast{display:none;position:fixed;bottom:20px;left:50%;transform:translateX(-50%);background:#172554;color:white;padding:12px 18px;border-radius:10px;box-shadow:0 5px 18px #0002;z-index:10}
+@media(max-width:800px){.columns{grid-template-columns:1fr}.stats{gap:8px}.stat-number{font-size:25px}.event{flex-wrap:wrap}.event-action{width:100%;flex-direction:row;justify-content:flex-start}.event-action button{flex:1}}
+</style>
+</head>
+<body>
+<header><div class="wrap"><div class="brand">CAMPUSCONNECT</div><h1>Discover. Register. Participate.</h1><p>A simple campus event portal to explore student activities, reserve a place, and keep track of your registrations.</p></div></header>
+<main>
+<section class="stats">
+ <div class="card"><div class="stat-label">Available Events</div><div class="stat-number" id="eventCount">0</div></div>
+ <div class="card"><div class="stat-label">My Registrations</div><div class="stat-number" id="registrationCount">0</div></div>
+ <div class="card"><div class="stat-label">Seats Reserved</div><div class="stat-number" id="seatCount">0</div></div>
+</section>
+<section class="columns">
+ <div class="card">
+  <h2>Register for an Event</h2>
+  <form id="registrationForm">
+   <label for="studentName">Student name *</label><input id="studentName" required maxlength="70" placeholder="Enter your full name">
+   <label for="studentId">USN / Student ID *</label><input id="studentId" required maxlength="30" placeholder="e.g., 1NH23CS001">
+   <label for="eventSelect">Choose event *</label><select id="eventSelect" required><option value="">Select an event</option></select>
+   <label for="email">Email address *</label><input id="email" type="email" required placeholder="student@example.com">
+   <label for="year">Year of study</label><select id="year"><option>1st Year</option><option>2nd Year</option><option>3rd Year</option><option>4th Year</option></select>
+   <button class="btn primary" type="submit">Confirm Registration</button>
+  </form>
+  <p style="font-size:12px;color:var(--muted);line-height:1.5;margin:12px 0 0">Demo project: registrations are saved in this browser only. No email is sent and no real booking is made.</p>
+ </div>
+ <div>
+  <div class="card">
+   <div class="section-title"><h2>Explore Campus Events</h2><span id="eventSubtext">Sample events</span></div>
+   <div class="toolbar">
+    <input id="search" placeholder="Search event or venue..." aria-label="Search events">
+    <select id="categoryFilter" aria-label="Filter by category"><option value="All">All categories</option><option>Technical</option><option>Cultural</option><option>Sports</option><option>Career</option></select>
+    <select id="availabilityFilter" aria-label="Filter availability"><option value="All">Any availability</option><option value="Open">Seats available</option><option value="Registered">My registrations</option></select>
+   </div>
+   <div id="eventList"></div>
+  </div>
+  <div class="card" style="margin-top:18px">
+   <div class="section-title"><h2>My Registrations</h2><span id="myRegSubtitle">0 registered</span></div>
+   <div id="myRegistrations"></div>
+  </div>
+ </div>
+</section>
+<footer>CampusConnect · A student project built with HTML, CSS and JavaScript</footer>
+</main><div id="toast" role="status"></div>
+<script>
+const EVENTS = [
+ {id:"e1",title:"Web Development Workshop",category:"Technical",date:"2026-11-05",time:"10:00 AM",venue:"Computer Lab 2",capacity:40,description:"Build a responsive web page and learn practical front-end development."},
+ {id:"e2",title:"Inter-College Coding Challenge",category:"Technical",date:"2026-11-12",time:"9:30 AM",venue:"Seminar Hall",capacity:60,description:"Solve programming problems, collaborate, and test your problem-solving skills."},
+ {id:"e3",title:"Campus Cultural Fest",category:"Cultural",date:"2026-11-18",time:"4:00 PM",venue:"Main Auditorium",capacity:100,description:"An evening of music, dance, performances, and student creativity."},
+ {id:"e4",title:"Sports Meet",category:"Sports",date:"2026-11-22",time:"8:00 AM",venue:"College Grounds",capacity:50,description:"Join friendly competitions and cheer for your department."},
+ {id:"e5",title:"Career Readiness Talk",category:"Career",date:"2026-11-28",time:"11:00 AM",venue:"Lecture Hall 1",capacity:35,description:"Explore interview preparation, resume building, and early-career skills."}
+];
+const KEY="campusConnectRegistrations";
+let registrations=loadRegistrations();
+function loadRegistrations(){try{return JSON.parse(localStorage.getItem(KEY))||[]}catch(e){return[]}}
+function save(){localStorage.setItem(KEY,JSON.stringify(registrations))}
+function escapeHTML(v){return String(v??"").replace(/[&<>"']/g,c=>({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#39;"}[c]))}
+function prettyDate(date){const d=new Date(date+"T12:00:00");return {day:d.getDate(),month:d.toLocaleString("en",{month:"short"})}}
+function registered(eventId){return registrations.some(r=>r.eventId===eventId)}
+function eventRegistrations(eventId){return registrations.filter(r=>r.eventId===eventId).length}
+function toast(msg){const el=document.getElementById("toast");el.textContent=msg;el.style.display="block";setTimeout(()=>el.style.display="none",2300)}
+function fillEventSelect(){
+ const select=document.getElementById("eventSelect"), old=select.value;
+ select.innerHTML='<option value="">Select an event</option>'+EVENTS.filter(e=>eventRegistrations(e.id)<e.capacity).map(e=>`<option value="${e.id}">${escapeHTML(e.title)} (${e.capacity-eventRegistrations(e.id)} seats left)</option>`).join("");
+ if([...select.options].some(o=>o.value===old))select.value=old;
+}
+function render(){
+ document.getElementById("eventCount").textContent=EVENTS.filter(e=>eventRegistrations(e.id)<e.capacity).length;
+ document.getElementById("registrationCount").textContent=registrations.length;
+ document.getElementById("seatCount").textContent=registrations.length;
+ const q=document.getElementById("search").value.trim().toLowerCase(),cat=document.getElementById("categoryFilter").value,avail=document.getElementById("availabilityFilter").value;
+ const shown=EVENTS.filter(e=>(cat==="All"||e.category===cat)&&(e.title+" "+e.venue+" "+e.description).toLowerCase().includes(q)&&(avail==="All"||(avail==="Open"?eventRegistrations(e.id)<e.capacity:registered(e.id))));
+ const list=document.getElementById("eventList");
+ list.innerHTML=shown.length?shown.map(e=>{
+  const d=prettyDate(e.date),count=eventRegistrations(e.id),full=count>=e.capacity,done=registered(e.id);
+  return `<article class="event"><div class="datebox"><strong>${d.day}</strong><span>${d.month}</span></div><div class="event-content"><h3>${escapeHTML(e.title)}</h3><p>${escapeHTML(e.description)}</p><div class="chips"><span class="chip">${escapeHTML(e.category)}</span><span class="chip">${escapeHTML(e.time)}</span><span class="chip">${escapeHTML(e.venue)}</span><span class="chip ${full?"full":"open"}">${full?"Full":e.capacity-count+" seats left"}</span></div></div><div class="event-action"><button class="btn ${done?"secondary":"primary"}" style="width:auto;margin:0" ${done||full?"disabled":""} onclick="chooseEvent('${e.id}')">${done?"Registered":full?"Full":"Register"}</button></div></article>`;
+ }).join(""):'<div class="empty">No events match your filters.</div>';
+ const mine=document.getElementById("myRegistrations");
+ document.getElementById("myRegSubtitle").textContent=registrations.length+" registered";
+ mine.innerHTML=registrations.length?registrations.slice().reverse().map(r=>{const e=EVENTS.find(x=>x.id===r.eventId);return e?`<div class="registration"><div><strong>${escapeHTML(e.title)}</strong><small>${escapeHTML(r.studentName)} · ${escapeHTML(r.studentId)} · ${escapeHTML(e.date)}</small></div><button class="btn danger" onclick="cancelRegistration('${r.id}')">Cancel</button></div>`:""}).join(""):'<div class="empty">You have not registered for an event yet.</div>';
+ fillEventSelect();
+}
+function chooseEvent(id){if(registered(id)){toast("You are already registered for this event.");return}document.getElementById("eventSelect").value=id;document.getElementById("studentName").focus();toast("Event selected. Complete the form to register.")}
+document.getElementById("registrationForm").addEventListener("submit",e=>{
+ e.preventDefault();const eventId=document.getElementById("eventSelect").value,event=EVENTS.find(x=>x.id===eventId);
+ if(!event)return;
+ const studentId=document.getElementById("studentId").value.trim();
+ if(registrations.some(r=>r.eventId===eventId&&r.studentId.toLowerCase()===studentId.toLowerCase())){toast("This student ID is already registered for this event.");return}
+ if(eventRegistrations(eventId)>=event.capacity){toast("Sorry, this event is full.");render();return}
+ registrations.push({id:Date.now().toString()+Math.random().toString(16).slice(2),eventId,studentName:document.getElementById("studentName").value.trim(),studentId,email:document.getElementById("email").value.trim(),year:document.getElementById("year").value,createdAt:Date.now()});
+ save();document.getElementById("registrationForm").reset();render();toast("Registration saved successfully!");
+});
+function cancelRegistration(id){const r=registrations.find(x=>x.id===id);if(r&&confirm("Cancel this event registration?")){registrations=registrations.filter(x=>x.id!==id);save();render();toast("Registration cancelled.")}}
+["search","categoryFilter","availabilityFilter"].forEach(id=>document.getElementById(id).addEventListener(id==="search"?"input":"change",render));
+render();
+</script>
+</body></html>
