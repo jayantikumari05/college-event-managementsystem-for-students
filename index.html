@@ -296,39 +296,51 @@ function addMessage(text, type) {
 launcher.onclick = () => panel.classList.add("open");
 close.onclick = () => panel.classList.remove("open");
 
+
 loadButton.onclick = async () => {
-  if (engine || loading) return;
+  if (loading || engine) return;
 
   if (!navigator.gpu) {
-    status.textContent =
-      "Your browser does not support WebGPU.";
+    status.textContent = "WebGPU is not supported by this browser.";
     return;
   }
 
   loading = true;
   loadButton.disabled = true;
+  status.textContent = "Initializing Llama 3.2...";
 
   try {
-    engine = await CreateMLCEngine(MODEL, {
+    const newEngine = new MLCEngine({
       initProgressCallback: (progress) => {
-        status.textContent =
-          progress.text || "Loading AI model...";
+        status.textContent = progress.text || "Loading AI model...";
       }
     });
 
-    status.textContent =
-      "Llama 3.2 AI is ready! Ask your question.";
+    // Explicitly load the model and wait until loading finishes
+    await newEngine.reload(MODEL);
 
+    // Make the engine available only after successful loading
+    engine = newEngine;
+
+    status.textContent = "Llama 3.2 AI is ready! Ask your question.";
     loadButton.textContent = "AI Model Ready";
+
+    console.log("Llama 3.2 model loaded successfully.");
+
   } catch (error) {
-    console.error(error);
-    status.textContent =
-      "Model loading failed. Check internet, GPU and console.";
+    console.error("Model loading error:", error);
+
+    engine = null;
+    status.textContent = "Model loading failed: " + error.message;
+
     loadButton.disabled = false;
+    loadButton.textContent = "Retry Loading AI Model";
+
   } finally {
     loading = false;
   }
 };
+
 
 form.onsubmit = async (event) => {
   event.preventDefault();
@@ -402,8 +414,7 @@ form.onsubmit = async (event) => {
 };
 </script>
  <script type="module">
-  import { CreateMLCEngine } from "https://esm.run/@mlc-ai/web-llm";
-
+  import { MLCEngine } from "https://esm.run/@mlc-ai/web-llm";
   const MODEL = "Llama-3.2-1B-Instruct-q4f32_1-MLC";
 
   // Rest of your chatbot JavaScript code goes here
