@@ -394,8 +394,7 @@ form.onsubmit = async (event) => {
 
   } catch (error) {
     console.error(error);
-    waiting.textContent =
-      "Sorry, I couldn't generate a response. Please try again.";
+    waiting.textContent = "Error: " + (error.message || error);
   } finally {
     input.disabled = false;
     input.focus();
