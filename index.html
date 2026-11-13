@@ -296,42 +296,39 @@ function addMessage(text, type) {
 launcher.onclick = () => panel.classList.add("open");
 close.onclick = () => panel.classList.remove("open");
 
-
-loadButton.onclick = async () => {
-  if (loading || engine) return;
+  loadButton.onclick = async () => {
+  if (engine || loading) return;
 
   if (!navigator.gpu) {
-    status.textContent = "WebGPU is not supported by this browser.";
+    status.textContent = "WebGPU is not supported.";
     return;
   }
 
   loading = true;
   loadButton.disabled = true;
-  status.textContent = "Initializing Llama 3.2...";
 
   try {
-    const newEngine = new MLCEngine({
+    const newEngine = await CreateMLCEngine(MODEL, {
       initProgressCallback: (progress) => {
-        status.textContent = progress.text || "Loading AI model...";
+        status.textContent =
+          progress.text || "Loading AI model...";
       }
     });
 
-    // Explicitly load the model and wait until loading finishes
-    await newEngine.reload(MODEL);
-
-    // Make the engine available only after successful loading
     engine = newEngine;
 
-    status.textContent = "Llama 3.2 AI is ready! Ask your question.";
+    status.textContent =
+      "Llama 3.2 AI is ready! Ask your question.";
+
     loadButton.textContent = "AI Model Ready";
 
-    console.log("Llama 3.2 model loaded successfully.");
+    console.log("WebLLM 0.2.88 model loaded successfully.");
 
   } catch (error) {
     console.error("Model loading error:", error);
 
     engine = null;
-    status.textContent = "Model loading failed: " + error.message;
+    status.textContent = "Loading failed: " + error.message;
 
     loadButton.disabled = false;
     loadButton.textContent = "Retry Loading AI Model";
@@ -340,7 +337,6 @@ loadButton.onclick = async () => {
     loading = false;
   }
 };
-
 
 form.onsubmit = async (event) => {
   event.preventDefault();
@@ -366,7 +362,7 @@ form.onsubmit = async (event) => {
   // Use the existing page content as event context.
   const pageContext = document.body.innerText
     .replace(/\s+/g, " ")
-    .slice(0, 7000);
+    .slice(0, 1200);
 
   try {
     const result = await engine.chat.completions.create({
@@ -389,7 +385,7 @@ form.onsubmit = async (event) => {
         }
       ],
       temperature: 0.4,
-      max_tokens: 350
+      max_tokens: 160
     });
 
     const answer =
@@ -414,7 +410,7 @@ form.onsubmit = async (event) => {
 };
 </script>
  <script type="module">
-  import { MLCEngine } from "https://esm.run/@mlc-ai/web-llm";
+  import { CreateMLCEngine } from "https://esm.run/@mlc-ai/web-llm@0.2.88";
   const MODEL = "Llama-3.2-1B-Instruct-q4f32_1-MLC";
 
   // Rest of your chatbot JavaScript code goes here
